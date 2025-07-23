@@ -1,27 +1,25 @@
-// Make sure to include the Amplify script in your HTML:
-// <script src="https://unpkg.com/aws-amplify@5.0.4/dist/aws-amplify.min.js"></script>
-if (window.Amplify) {
-    window.Amplify.configure({
-        Auth: {
-            region: 'eu-north-1',
-            userPoolId: 'eu-north-1_peaK2w5hI',
-            userPoolWebClientId: '4ksaku2s44fpcpc0g2ft5qqfrb',
-            oauth: {
-                domain: 'eu-north-1peak2w5hi.auth.eu-north-1.amazoncognito.com',
-                scope: ['email', 'profile', 'openid'],
-                redirectSignIn: window.location.origin + '/',
-                redirectSignOut: window.location.origin + '/',
-                responseType: 'token'
-            }
+
+const { Amplify, Auth } = window.aws_amplify;
+Amplify.configure({
+    Auth: {
+        region: 'eu-north-1',
+        userPoolId: 'eu-north-1_peaK2w5hI',
+        userPoolWebClientId: '4ksaku2s44fpcpc0g2ft5qqfrb',
+        oauth: {
+            domain: 'eu-north-1peak2w5hi.auth.eu-north-1.amazoncognito.com',
+            scope: ['email', 'profile', 'openid'],
+            redirectSignIn: window.location.origin + '/',
+            redirectSignOut: window.location.origin + '/',
+            responseType: 'token'
         }
-    });
-}
+    }
+});
 
 class AuthManager {
     // Login with Google using Amplify Auth
     async loginWithGoogle() {
         if (window.Amplify && window.Amplify.Auth && window.Amplify.Auth.federatedSignIn) {
-            await window.Amplify.Auth.federatedSignIn({ provider: 'Google' });
+            await Auth.federatedSignIn({ provider: 'Google' });
         } else {
             alert('Amplify is not loaded. Please ensure the CDN script is included in your HTML.');
         }
@@ -51,16 +49,16 @@ class AuthManager {
             const user = { role: 'user', username: email, email };
             sessionStorage.setItem('currentUser', JSON.stringify(user));
         }
-        // // Remove token from URL for cleanliness
-        // if (accessToken || idToken) {
-        //     window.location.hash = '';
-        //     // Optionally, redirect to home page if on login page
-        //     if (window.location.pathname.endsWith('login.html')) {
-        //         window.location.href = 'index.html';
-        //     }
-        // }
+        // Remove token from URL for cleanliness
+        if (accessToken || idToken) {
+            window.location.hash = '';
+            // Optionally, redirect to home page if on login page
+            if (window.location.pathname.endsWith('login.html')) {
+                window.location.href = 'index.html';
+            }
+        }
     }
-   
+
     // Signup function for both roles
     async signup(email, username, password, role) {
         const cognitoEndpoint = 'https://cognito-idp.eu-north-1.amazonaws.com/';
@@ -72,7 +70,7 @@ class AuthManager {
         } else {
             throw new Error('Invalid role');
         }
-        
+
         // Step 1: Sign up the user
         const signupPayload = {
             ClientId: clientId,
@@ -85,7 +83,7 @@ class AuthManager {
                 }
             ]
         };
-        
+
         try {
             const signupResponse = await fetch(cognitoEndpoint, {
                 method: 'POST',
@@ -101,20 +99,20 @@ class AuthManager {
                 try {
                     const errData = await signupResponse.json();
                     if (errData && errData.message) errorMsg = errData.message;
-                } catch {}
+                } catch { }
                 throw new Error(errorMsg);
             }
-            
+
             const signupData = await signupResponse.json();
-            
+
             if (signupData.UserConfirmed === false) {
                 try {
                     const confirmPayload = {
                         ClientId: clientId,
                         Username: username,
-                        ConfirmationCode: '123456' 
+                        ConfirmationCode: '123456'
                     };
-                    
+
                     const confirmResponse = await fetch(cognitoEndpoint, {
                         method: 'POST',
                         headers: {
@@ -123,7 +121,7 @@ class AuthManager {
                         },
                         body: JSON.stringify(confirmPayload)
                     });
-                    
+
                     if (!confirmResponse.ok) {
                         console.warn('Auto-confirmation failed, user may need to verify email');
                     }
@@ -131,7 +129,7 @@ class AuthManager {
                     console.warn('Auto-confirmation attempt failed:', confirmError.message);
                 }
             }
-            
+
             return signupData;
         } catch (error) {
             throw new Error(error.message || 'Signup failed');
@@ -164,7 +162,7 @@ class AuthManager {
     loadUserFromSession() {
         const savedUser = sessionStorage.getItem('currentUser');
         const savedToken = sessionStorage.getItem('authToken');
-        
+
         if (savedUser && savedToken) {
             try {
                 this.currentUser = JSON.parse(savedUser);
@@ -211,26 +209,26 @@ class AuthManager {
             // Call placeholder Cognito API
             const res = await this.authenticateWithCognito(username, password, role);
 
-            var email = ''; 
+            var email = '';
             try {
-                const idToken = res.IdToken; 
+                const idToken = res.IdToken;
                 const payload = JSON.parse(atob(idToken.split('.')[1]));
                 if (payload.email) email = payload.email;
             } catch (e) {
                 console.warn('Could not decode token for email:', e);
             }
 
-            this.currentUser = { 
-                role, 
-                username, 
-                email 
+            this.currentUser = {
+                role,
+                username,
+                email
             };
-            
+
             // Store in sessionStorage
-            
+
             sessionStorage.setItem('authToken', res.AccessToken);
             sessionStorage.setItem('currentUser', JSON.stringify(this.currentUser));
-            
+
             // Save credentials for auto-relogin (only if successful)
             const credentials = {
                 username: username,
@@ -238,7 +236,7 @@ class AuthManager {
                 role: role
             };
             sessionStorage.setItem('loginCredentials', JSON.stringify(credentials));
-            
+
             // Update UI
             this.updateUIForAuthState();
 
@@ -264,50 +262,50 @@ class AuthManager {
         const cognitoEndpoint = 'https://cognito-idp.eu-north-1.amazonaws.com/';
         try {
             let response;
-            if(role == "user") {
+            if (role == "user") {
                 //user login
                 response = await fetch(cognitoEndpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-amz-json-1.1',
-                    'X-Amz-Target': 'AWSCognitoIdentityProviderService.InitiateAuth'
-                },
-                body: JSON.stringify({
-                    AuthFlow: 'USER_PASSWORD_AUTH',
-                    ClientId: '4ksaku2s44fpcpc0g2ft5qqfrb',
-                    AuthParameters: {
-                        USERNAME: username,
-                        PASSWORD: password
-                    }
-                })
-            });
-            }else if(role == "organisation") {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-amz-json-1.1',
+                        'X-Amz-Target': 'AWSCognitoIdentityProviderService.InitiateAuth'
+                    },
+                    body: JSON.stringify({
+                        AuthFlow: 'USER_PASSWORD_AUTH',
+                        ClientId: '4ksaku2s44fpcpc0g2ft5qqfrb',
+                        AuthParameters: {
+                            USERNAME: username,
+                            PASSWORD: password
+                        }
+                    })
+                });
+            } else if (role == "organisation") {
                 // org login
                 response = await fetch(cognitoEndpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-amz-json-1.1',
-                    'X-Amz-Target': 'AWSCognitoIdentityProviderService.InitiateAuth'
-                },
-                body: JSON.stringify({
-                    AuthFlow: 'USER_PASSWORD_AUTH',
-                    ClientId: '3erjjfeu52d0m418tgc3r1tgo4',
-                    AuthParameters: {
-                        USERNAME: username,
-                        PASSWORD: password
-                    }
-                })
-            });
-            } else{
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-amz-json-1.1',
+                        'X-Amz-Target': 'AWSCognitoIdentityProviderService.InitiateAuth'
+                    },
+                    body: JSON.stringify({
+                        AuthFlow: 'USER_PASSWORD_AUTH',
+                        ClientId: '3erjjfeu52d0m418tgc3r1tgo4',
+                        AuthParameters: {
+                            USERNAME: username,
+                            PASSWORD: password
+                        }
+                    })
+                });
+            } else {
                 throw new Error('Invalid role specified');
             }
-            
+
             if (!response.ok) {
                 let errorMsg = 'Authentication failed';
                 try {
                     const errData = await response.json();
                     if (errData && errData.message) errorMsg = errData.message;
-                } catch {}
+                } catch { }
                 throw new Error(errorMsg);
             }
             const data = await response.json();
@@ -323,12 +321,12 @@ class AuthManager {
     // Logout function
     logout() {
         this.currentUser = null;
-        
+
         // Clear sessionStorage
         sessionStorage.removeItem('authToken');
         sessionStorage.removeItem('currentUser');
         sessionStorage.removeItem('loginCredentials'); // Clear saved credentials
-        
+
         this.updateUIForAuthState();
         this.notifyAuthChange();
     }
@@ -339,7 +337,7 @@ class AuthManager {
         if (!this.currentUser) {
             const savedUser = sessionStorage.getItem('currentUser');
             const savedToken = sessionStorage.getItem('authToken');
-            
+
             if (savedUser && savedToken) {
                 try {
                     this.currentUser = JSON.parse(savedUser);
@@ -349,7 +347,7 @@ class AuthManager {
                 }
             }
         }
-        
+
         return this.currentUser;
     }
 
@@ -358,7 +356,7 @@ class AuthManager {
         // Check sessionStorage directly for more reliable authentication check
         const savedUser = sessionStorage.getItem('currentUser');
         const savedToken = sessionStorage.getItem('authToken');
-        
+
         if (savedUser && savedToken) {
             // Check if token is expired
             if (this.isTokenExpired(savedToken)) {
@@ -366,7 +364,7 @@ class AuthManager {
                 this.logout();
                 return false;
             }
-            
+
             // If we have session data but currentUser is null, load it
             if (!this.currentUser) {
                 try {
@@ -378,22 +376,22 @@ class AuthManager {
             }
             return true;
         }
-        
+
         return false;
     }
 
     // Check if JWT token is expired
     isTokenExpired(token) {
         if (!token) return true;
-        
+
         try {
             // Parse JWT token (basic parsing without verification)
             const parts = token.split('.');
             if (parts.length !== 3) return true;
-            
+
             const payload = JSON.parse(atob(parts[1]));
             const currentTime = Math.floor(Date.now() / 1000);
-            
+
             // Check if token is expired (with 30 second buffer)
             return payload.exp < (currentTime + 30);
         } catch (error) {
@@ -405,15 +403,15 @@ class AuthManager {
     // Enhanced authentication check with automatic relogin
     async checkAuthWithRelogin() {
         const savedToken = sessionStorage.getItem('authToken');
-        
+
         if (!savedToken) {
             return false;
         }
-        
+
         // If token is expired, attempt relogin
         if (this.isTokenExpired(savedToken)) {
             console.log('Token expired, attempting relogin...');
-            
+
             // Try to get saved credentials for relogin
             const savedCredentials = sessionStorage.getItem('loginCredentials');
             if (savedCredentials) {
@@ -431,14 +429,14 @@ class AuthManager {
                 return false;
             }
         }
-        
+
         return this.isLoggedIn();
     }
 
     // Universal auth check for all pages - handles relogin automatically
     async ensureAuthenticated() {
         const isAuthenticated = await this.checkAuthWithRelogin();
-        
+
         if (!isAuthenticated) {
             alert('Your session has expired. Attempting to re-login.');
             let relogin = await this.checkAuthWithRelogin();
@@ -447,11 +445,11 @@ class AuthManager {
             }
             return false;
         }
-        
+
         return isAuthenticated;
     }
 
-   
+
 
     // Check if current user is of specific type
     isUserType(type) {
@@ -488,7 +486,7 @@ class AuthManager {
     // Update UI based on authentication state
     updateUIForAuthState() {
         const isLoggedIn = this.isLoggedIn();
-        
+
         // Toggle visibility of auth-related buttons
         if (this.profileBtn) {
             this.profileBtn.parentElement.classList.toggle('hidden', !isLoggedIn);
