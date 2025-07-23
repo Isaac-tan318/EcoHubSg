@@ -1,27 +1,18 @@
 
-const { Amplify, Auth } = window.aws_amplify;
-Amplify.configure({
-    Auth: {
-        region: 'eu-north-1',
-        userPoolId: 'eu-north-1_peaK2w5hI',
-        userPoolWebClientId: '4ksaku2s44fpcpc0g2ft5qqfrb',
-        oauth: {
-            domain: 'eu-north-1peak2w5hi.auth.eu-north-1.amazoncognito.com',
-            scope: ['email', 'profile', 'openid'],
-            redirectSignIn: window.location.origin + '/',
-            redirectSignOut: window.location.origin + '/',
-            responseType: 'token'
-        }
-    }
-});
+
 
 class AuthManager {
-    // Login with Google using Amplify Auth
+    // Google login using Cognito Hosted UI
     async loginWithGoogle() {
-        if (window.Amplify && window.Amplify.Auth && window.Amplify.Auth.federatedSignIn) {
-            await Auth.federatedSignIn({ provider: 'Google' });
-        } else {
-            alert('Amplify is not loaded. Please ensure the CDN script is included in your HTML.');
+        try {
+            const clientId = '4ksaku2s44fpcpc0g2ft5qqfrb';
+            const redirectUri = encodeURIComponent('https://main.djvt9w321pewe.amplifyapp.com');
+            const scope = encodeURIComponent('email openid profile');
+            const url = `https://eu-north-1peak2w5hi.auth.eu-north-1.amazoncognito.com/oauth2/authorize?identity_provider=Google&redirect_uri=${redirectUri}&response_type=code&client_id=${clientId}&scope=${scope}`;
+            window.location.href = url;
+        } catch (error) {
+            alert('Google login failed to start. Please try again.');
+            console.error('loginWithGoogle error:', error);
         }
     }
 
