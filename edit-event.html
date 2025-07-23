@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" class="edit-event-html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Event</title>
+    <link rel="stylesheet" href="edit-event.css">
+</head>
+<body class="edit-event-body">
+    <div class="edit-main-container">
+        <a href="profile.html" class="back-arrow" title="Back">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+        </a>
+        
+        <div id="loading" class="loader"></div>
+
+        <!-- Event Grid Container -->
+        <div id="event-grid" class="event-grid"></div>
+        
+        <form id="edit-event-form" class="hidden">
+            <div class="form-grid">
+                <div class="event-image-display" id="event-image-display">
+                    <img src="" alt="Event Image" id="event-image" style="display:none;">
+                    <p id="no-image-text" style="display:none;">No image was provided for this event.</p>
+                </div>
+                <div class="form-fields">
+                    <div class="form-group">
+                        <label for="event-title" class="edit-event-label">Title</label>
+                        <input type="text" id="event-title" name="eventTitle" placeholder="Write title" required class="edit-event-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="event-description" class="edit-event-label">Description</label>
+                        <textarea id="event-description" name="eventDescription" placeholder="Write description" required class="edit-event-textarea"></textarea>
+                    </div>
+                    <div class="row-fields">
+                        <div class="form-group">
+                            <label for="event-location" class="edit-event-label">Location</label>
+                            <input type="text" id="event-location" name="eventLocation" placeholder="Choose location" required class="edit-event-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="event-date" class="edit-event-label">Date</label>
+                            <input type="date" id="event-date" name="eventDate" placeholder="Choose date" required class="edit-event-input">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="submit-row">
+                <button type="submit" class="edit-event-button">Update Event</button>
+            </div>
+        </form>
+    </div>
+    
+    <script src="auth.js"></script>
+    <script src="organisation.js"></script>
+    <script>
+        let currentEventId = null;
+        let currentEventImageUrl = null;
+
+        // Get event data from URL parameters
+        function getEventDataFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return {
+                id: urlParams.get('id'),
+                title: urlParams.get('title') || '',
+                description: urlParams.get('description') || '',
+                location: urlParams.get('location') || '',
+                date: urlParams.get('date') || '',
+                orgUsername: urlParams.get('orgUsername') || '',
+                image: urlParams.get('image') || ''
+            };
+        }
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check authentication with auto-relogin
+            const isAuthenticated = await authManager.ensureAuthenticated();
+            if (!isAuthenticated) return;
+            
+            const eventData = getEventDataFromUrl();
+            if (!eventData.id) {
+                alert('No event ID provided');
+                window.location.href = 'profile.html';
+                return;
+            }
+            
+            // Check if current user owns this event
+            const currentUser = authManager.getCurrentUser();
+            if (!currentUser || eventData.orgUsername !== currentUser.username) {
+                alert('You can only edit your own events');
+                window.location.href = 'profile.html';
+                return;
+            }
+            
+            currentEventId = eventData.id;
+            currentEventImageUrl = eventData.image;
+            populateForm(eventData);
+
+            // Hide loading and show form
+            document.getElementById('loading').style.display = 'none';
+            const form = document.getElementById('edit-event-form');
+            form.classList.remove('hidden');
+            form.style.display = 'block';
+        });
+        
+        // Populate form with event data
+        function populateForm(eventData) {
+            document.getElementById('event-title').value = eventData.title || '';
+            document.getElementById('event-description').value = eventData.description || '';
+            document.getElementById('event-location').value = eventData.location || '';
+            document.getElementById('event-date').value = eventData.date || '';
+
+            const imageElement = document.getElementById('event-image');
+            const noImageText = document.getElementById('no-image-text');
+            if (eventData.image) {
+                imageElement.src = eventData.image;
+                imageElement.style.display = 'block';
+                noImageText.style.display = 'none';
+            } else {
+                imageElement.style.display = 'none';
+                noImageText.style.display = 'block';
+            }
+        }
+        
+        // Handle form submission
+        document.getElementById('edit-event-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            submitButton.classList.add('button-loading');
+            
+            // Check authentication before submitting
+            const isAuthenticated = await authManager.ensureAuthenticated();
+            if (!isAuthenticated) {
+                submitButton.classList.remove('button-loading');
+                return;
+            }
+            
+            const title = document.getElementById('event-title').value.trim();
+            const description = document.getElementById('event-description').value.trim();
+            const location = document.getElementById('event-location').value.trim();
+            const date = document.getElementById('event-date').value;
+            
+            if (!title || !description || !location || !date) {
+                alert('Please fill in all fields');
+                submitButton.classList.remove('button-loading');
+                return;
+            }
+            
+            // Create URL parameters with updated event data
+            const updatedEvent = {
+                id: currentEventId,
+                title: title,
+                description: description,
+                location: location,
+                date: date,
+                orgUsername: authManager.getCurrentUser().username,
+                image: currentEventImageUrl
+            };
+
+            try {
+                await editEvent(updatedEvent);
+                alert('Event updated successfully!');
+                window.location.href = 'profile.html';
+            } catch (error) {
+                console.error('Error updating event:', error);
+                // Check if it's an auth error and try to relogin
+                if (error.message && error.message.includes('401')) {
+                    const reloginSuccess = await authManager.ensureAuthenticated();
+                    if (reloginSuccess) {
+                        // Retry the operation
+                        try {
+                            await editEvent(updatedEvent);
+                            alert('Event updated successfully!');
+                            window.location.href = 'profile.html';
+                        } catch (retryError) {
+                            alert('Failed to update event. Please try again.');
+                        }
+                    }
+                } else {
+                    alert('Failed to update event. Please try again.');
+                }
+            } finally {
+                submitButton.classList.remove('button-loading');
+            }
+        });
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,353 @@
+/* --- General Styles --- */
+body {
+    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+    margin: 0;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#app {
+    width: 100%;
+    margin: auto;
+}
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem; /* Adjusted padding */
+    height: 72px; /* Consistent height */
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.logo {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #27ae60; /* Eco-friendly green */
+    text-decoration: none;
+}
+
+.nav-center {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.search-input {
+    width: 300px;
+    padding: 0.6rem 1.2rem;
+    border-radius: 30px;
+    border: 1px solid #ddd;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    border-color: #27ae60;
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+}
+
+.auth-buttons {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.auth-buttons a {
+    text-decoration: none;
+}
+
+button, .button {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+#login-btn {
+    background-color: #27ae60;
+    color: white;
+}
+
+#login-btn:hover {
+    background-color: #229954;
+}
+
+#signup-btn {
+    background-color: #f1f1f1;
+    color: #333;
+}
+
+#signup-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.profile-icon-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+}
+
+.profile-icon-svg {
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.profile-icon-link:hover .profile-icon-svg {
+    color: #27ae60;
+}
+
+.create-event-btn {
+    background-color: #3498db; 
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.create-event-btn svg {
+    margin-right: 0.5rem;
+}
+
+.create-event-btn:hover {
+    background-color: #2980b9;
+}
+
+
+/* --- Main Content & Event Cards --- */
+#main-content {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.page-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 0rem;
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+.events-grid, #org-events-list, #search-results {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.event-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.event-card-image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+}
+
+.event-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.event-card-content {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.event-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #34495e;
+    margin-bottom: 0.75rem;
+}
+
+.event-card-desc {
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.5;
+    flex-grow: 1;
+    margin-bottom: 1.5rem;
+}
+
+.event-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #555;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.event-card-meta svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2;
+    color: #27ae60;
+}
+
+.event-card-actions {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f0f0f0;
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.event-card-actions .button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 6px;
+}
+
+.event-card-actions .edit-btn {
+    background-color: #3498db;
+    color: white;
+}
+.event-card-actions .edit-btn:hover {
+    background-color: #2980b9;
+}
+
+.event-card-actions .delete-btn {
+    background-color: #e74c3c;
+    color: white;
+}
+.event-card-actions .delete-btn:hover {
+    background-color: #c0392b;
+}
+
+.event-card .signup-btn {
+    margin-top: auto; /* Pushes the button to the bottom */
+    background-color: #27ae60;
+    color: white;
+    width: 100%;
+}
+
+.event-card .signup-btn:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+}
+
+/* --- Forms --- */
+.container {
+    max-width: 450px;
+    margin: 4rem auto;
+    padding: 3rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+.container h1 {
+    color: #27ae60;
+    font-size: 2rem;
+}
+
+.container h2 {
+    font-weight: 400;
+    color: #555;
+    margin-bottom: 2rem;
+}
+
+input, select {
+    display: block;
+    width: 100%;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1rem;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+label[for="role"] {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+input:focus, select:focus {
+    border-color: #27ae60;
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+    outline: none;
+}
+
+.container button {
+    width: 100%;
+    background-color: #27ae60;
+}
+
+.container p {
+    margin-top: 1.5rem;
+    color: #777;
+}
+
+.container a {
+    color: #27ae60;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.container a:hover {
+    text-decoration: underline;
+}
+
+/* --- Loading Spinner --- */
+.loader {
+    border: 4px solid #f3f3f3; /* Light grey */
+    border-top: 4px solid #27ae60; /* Green */
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 2rem 2rem 2rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.button-loading {
+    position: relative;
+    color: transparent !important;
+    pointer-events: none;
+}
+
+.button-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin-top: -8px;
+    margin-left: -8px;
+    border: 2px solid #fff;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}

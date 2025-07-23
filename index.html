@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events Webapp</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <nav>
+            <div class="logo">EcoHubSg</div>
+            <div class="nav-center">
+                <form id="search-form" class="search-form">
+                    <input type="text" id="search-input" class="search-input" placeholder="Search events..." />
+                </form>
+                <div class="auth-buttons">
+                    <a href="profile.html" id="profile-icon-link" class="profile-icon-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="profile-icon-svg">
+                            <circle cx="12" cy="8" r="4"/>
+                            <path d="M12 14c-5 0-8 2.5-8 4v2h16v-2c0-1.5-3-4-8-4z"/>
+                        </svg>
+                    </a>
+                    <a href="login.html"><button id="login-btn">Login</button></a>
+                    <a href="register.html"><button id="signup-btn">Sign Up</button></a>
+                    <a href="create-event.html"><button id="create-event-btn" class="hidden create-event-btn">
+                        <span class="create-event-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                        </span>
+                        Create Event
+                    </button></a>
+                </div>
+            </div>
+        </nav>
+        <h2 class="page-title">Upcoming Events</h2>
+        <div id="main-content">
+            <div class="loader"></div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('search-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const query = document.getElementById('search-input').value.trim();
+            if (query) {
+                window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+            }
+        });
+        // Show/hide create event button for orgs
+        function updateCreateEventBtn() {
+            const currentUser = authManager.getCurrentUser();
+            const btn = document.getElementById('create-event-btn');
+            if (btn) btn.classList.toggle('hidden', !(currentUser && currentUser.role === 'organisation'));
+        }
+        // Show/hide auth buttons based on login status
+        function updateAuthButtons() {
+            const currentUser = authManager.getCurrentUser();
+            const loginBtn = document.getElementById('login-btn');
+            const signupBtn = document.getElementById('signup-btn');
+            if (loginBtn) loginBtn.parentElement.classList.toggle('hidden', !!currentUser);
+            if (signupBtn) signupBtn.parentElement.classList.toggle('hidden', !!currentUser);
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCreateEventBtn();
+            updateAuthButtons();
+        });
+        if (typeof authManager !== 'undefined' && typeof authManager.onAuthChange === 'function') {
+            authManager.onAuthChange(function() {
+                updateCreateEventBtn();
+                updateAuthButtons();
+            });
+        }
+
+        document.getElementById('profile-icon-link').addEventListener('click', function(event) {
+            event.preventDefault();
+            const currentUser = authManager.getCurrentUser();
+            if (currentUser) {
+                window.location.href = 'profile.html';
+            } else {
+                alert('Please log in to view your profile.');
+            }
+        });
+    </script>
+    <script src="auth.js"></script>
+    <script src="event.js"></script>
+</body>
+</html>

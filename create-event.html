@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" class="edit-event-html">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Event</title>
+    <link rel="stylesheet" href="create-event.css">
+</head>
+
+<body class="edit-event-body">
+    <div class="edit-main-container">
+        <div class="form-header">
+            <a href="index.html" class="back-arrow" title="Back">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="none" stroke="currentColor"
+                    stroke-width="3" viewBox="0 0 24 24">
+                    <path d="M15 18l-6-6 6-6" />
+                </svg>
+            </a>
+            <h1 class="form-title">Create New Event</h1>
+        </div>
+        <form id="create-event-form">
+            <div class="form-grid">
+                <div class="image-upload">
+                    <label for="event-image-input" class="image-placeholder" id="image-preview-container">
+                        <img id="image-preview" src="" alt="Image Preview" style="display:none;">
+                        <div id="upload-icon">
+                            <svg fill="none" stroke="#222" stroke-width="3" viewBox="0 0 100 100">
+                                <rect x="10" y="10" width="80" height="80" rx="15" />
+                                <circle cx="35" cy="35" r="10" />
+                                <polyline points="20,80 60,40 85,70" />
+                            </svg>
+                            <span>Upload Image</span>
+                        </div>
+                    </label>
+                    <input type="file" id="event-image-input" accept="image/*" style="display:none;">
+                </div>
+                <div class="form-fields">
+                    <div class="form-group">
+                        <label for="event-title" class="edit-event-label">Title</label>
+                        <input type="text" id="event-title" name="eventTitle" placeholder="Write title" required
+                            class="edit-event-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="event-description" class="edit-event-label">Description</label>
+                        <textarea id="event-description" name="eventDescription" placeholder="Write description"
+                            required class="edit-event-textarea"></textarea>
+                    </div>
+                    <div class="row-fields">
+                        <div class="form-group">
+                            <label for="event-location" class="edit-event-label">Location</label>
+                            <input type="text" id="event-location" name="eventLocation" placeholder="Choose location"
+                                required class="edit-event-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="event-date" class="edit-event-label">Date</label>
+                            <input type="date" id="event-date" name="eventDate" placeholder="Choose date" required
+                                class="edit-event-input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="event-interests" class="edit-event-label">Interests</label>
+                        <div class="interests-input-container">
+                            <input type="text" id="event-interests" placeholder="Add interests (e.g., 'sustainability')">
+                            <button type="button" id="add-interest-btn" class="button">Add</button>
+                        </div>
+                        <div class="interests-list" id="interests-list-display">
+                            <!-- Interest tags will be displayed here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="submit-row">
+                <button type="submit" class="edit-event-button">Post Event</button>
+            </div>
+        </form>
+    </div>
+    <script src="auth.js"></script>
+    <script src="organisation.js"></script>
+    <script>
+        const BASE_URL = "https://i08bww0j0l.execute-api.eu-north-1.amazonaws.com";
+        document.addEventListener("DOMContentLoaded", async function () {
+            // Check authentication with auto-relogin
+            const isAuthenticated = await authManager.ensureAuthenticated();
+            if (!isAuthenticated) return;
+
+            const currentUser = authManager.getCurrentUser();
+            if (!currentUser || currentUser.role !== "organisation") {
+                alert("Only organisations can create events.");
+                window.location.href = "index.html";
+                return;
+            }
+
+            const form = document.getElementById("create-event-form");
+            const imageInput = document.getElementById("event-image-input");
+            const imagePreview = document.getElementById("image-preview");
+            const uploadIcon = document.getElementById("upload-icon");
+            const interestsInput = document.getElementById("event-interests");
+            const addInterestBtn = document.getElementById("add-interest-btn");
+            const interestsDisplay = document.getElementById("interests-list-display");
+
+            let interests = [];
+
+            function renderInterests() {
+                interestsDisplay.innerHTML = '';
+                interests.forEach((interest, index) => {
+                    const interestTag = document.createElement('div');
+                    interestTag.className = 'interest-tag';
+                    interestTag.innerHTML = `
+                        ${interest}
+                        <button type="button" class="remove-btn" data-index="${index}" title="Remove interest">×</button>
+                    `;
+                    interestsDisplay.appendChild(interestTag);
+                });
+            }
+
+            addInterestBtn.addEventListener("click", function() {
+                const newInterest = interestsInput.value.trim();
+                if (newInterest && !interests.includes(newInterest)) {
+                    interests.push(newInterest);
+                    interestsInput.value = "";
+                    renderInterests();
+                }
+            });
+
+            interestsDisplay.addEventListener("click", function(e) {
+                if (e.target.classList.contains("remove-btn")) {
+                    const index = parseInt(e.target.dataset.index, 10);
+                    interests.splice(index, 1);
+                    renderInterests();
+                }
+            });
+
+            imageInput.addEventListener("change", function () {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.style.display = "block";
+                        uploadIcon.style.display = "none";
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            if (!form) return;
+            form.addEventListener("submit", async function (e) {
+                e.preventDefault();
+                const submitButton = e.target.querySelector('button[type="submit"]');
+                submitButton.classList.add('button-loading');
+
+                // Get form values
+                const title = document.getElementById("event-title").value.trim();
+                const description = document.getElementById("event-description").value.trim();
+                const location = document.getElementById("event-location").value.trim();
+                const date = document.getElementById("event-date").value;
+                const imageFile = document.getElementById("event-image-input").files[0];
+
+                let orgUsername = null;
+                const currentUser = authManager.getCurrentUser();
+                if (currentUser && currentUser.username) {
+                    orgUsername = currentUser.username;
+                }
+                let errorMsg = "";
+                if (!title) errorMsg += "Title is required.\n";
+                if (!description) errorMsg += "Description is required.\n";
+                if (!location) errorMsg += "Location is required.\n";
+                if (!date) errorMsg += "Date is required.\n";
+                if (!orgUsername) errorMsg += "Organisation username not found. Please log in again.\n";
+                
+                if (errorMsg) {
+                    alert(errorMsg);
+                    submitButton.classList.remove('button-loading');
+                    return;
+                }
+
+                let imageUrl = '';
+
+                // --- BASE64 UPLOAD LOGIC ---
+                if (imageFile) {
+                    try {
+                        const base64Data = await new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onload = () => resolve(reader.result.split(',')[1]);
+                            reader.onerror = error => reject(error);
+                            reader.readAsDataURL(imageFile);
+                        });
+
+                        const res = await fetch(`${BASE_URL}/event-image`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${authManager.getAuthToken()}`
+                            },
+                            body: JSON.stringify({
+                                fileName: imageFile.name,
+                                fileType: imageFile.type,
+                                base64Image: base64Data
+                            })
+                        });
+
+                        const data = await res.json();
+                        console.log(data)
+                        if (res.ok && data && data.url) {
+                            imageUrl = data.url;
+                        } else {
+                            throw new Error(data.error || 'Unknown error during image upload.');
+                        }
+                    } catch (err) {
+                        alert("Failed to upload image: " + err.message);
+                        console.error(err);
+                        submitButton.classList.remove('button-loading');
+                        return;
+                    }
+                }
+
+
+                try {
+                    const newEvent = await createEvent({
+                        title,
+                        description,
+                        location,
+                        date,
+                        orgUsername,
+                        image: imageUrl,
+                        interests: interests
+                    });
+
+                    if (newEvent) {
+                        alert("Event created successfully!");
+                        window.location.href = "index.html";
+                    } else {
+                        throw new Error('Failed to create event.');
+                    }
+                } catch (err) {
+                    alert("Failed to create event: " + err.message);
+                    console.error("Error creating event:", err);
+                } finally {
+                    submitButton.classList.remove('button-loading');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

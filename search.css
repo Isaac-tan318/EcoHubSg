@@ -1,0 +1,17 @@
+/* Search Page Specific Styles */
+
+#results-heading {
+    font-size: 1.8rem;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+}
+
+.back-btn-search {
+    margin-bottom: 2rem;
+    background: #3498db;
+    color: white;
+}
+
+.back-btn-search:hover {
+    background: #2980b9;
+}

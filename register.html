@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div id="user-signup">
+            <h1>EcoHubSg</h1>
+            <br>
+            <h2>Sign Up</h2>
+            <form id="signup-form">
+                <input id="signup-email" type="email" placeholder="Email" required>
+                <input id="signup-username" type="text" placeholder="Username" required>
+                <input id="signup-password" type="password" placeholder="Password" required>
+                <label for="signup-role"><b>Role</b></label>
+                <select name="role" id="signup-role" required>
+                    <option value="user">User</option>
+                    <option value="organisation">Organisation</option>
+                </select>
+                <button type="submit" id="login-btn">Sign Up</button>
+            </form>
+            <p>Already have an account? <a href="login.html">Login here</a></p>
+        </div>
+    </div>
+    <script src="auth.js"></script>
+    <script>
+        document.getElementById('signup-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('signup-email').value;
+            const username = document.getElementById('signup-username').value;
+            const password = document.getElementById('signup-password').value;
+            const role = document.getElementById('signup-role').value;
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            submitButton.classList.add('button-loading');
+            try {
+                await authManager.signup(email, username, password, role);
+                alert('Signup successful! Please log in.');
+                window.location.href = 'login.html';
+            } catch (error) {
+                alert('Signup failed: ' + error.message);
+            } finally {
+                submitButton.classList.remove('button-loading');
+            }
+        });
+    </script>
+</body>
+</html>

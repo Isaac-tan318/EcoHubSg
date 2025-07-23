@@ -1,0 +1,254 @@
+/* --- Form Page Styles --- */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+}
+
+.edit-main-container {
+    max-width: 800px;
+    margin: 3rem auto;
+    padding: 3rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.back-arrow {
+    color: #555;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.back-arrow:hover {
+    color: #27ae60;
+}
+
+.form-header {
+    display: flex;
+    align-items: top;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+}
+
+.form-title {
+    font-size: 2.25rem;
+    color: #2c3e50;
+    font-weight: 700;
+    margin: 0; /* Remove default margins */
+    flex: 1; 
+    text-align: center; /* Center the title */
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+.image-upload {
+    text-align: center;
+}
+
+.image-placeholder {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+    overflow: hidden; /* To contain the image */
+}
+
+.image-placeholder:hover {
+    border-color: #27ae60;
+    background-color: #f1f8e9;
+}
+
+.image-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.image-placeholder svg {
+    width: 40px;
+    height: 40px;
+    stroke: #aaa;
+    margin-bottom: 0.75rem;
+}
+
+#upload-icon span {
+    font-size: 0.9rem;
+    color: #777;
+    font-weight: 500;
+}
+
+.image-placeholder p {
+    margin: 0;
+    color: #777;
+    font-weight: 500;
+}
+
+.form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.event-description {
+    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+}
+    
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.edit-event-label {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #34495e;
+}
+
+.edit-event-input,
+.edit-event-textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.8rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+}
+
+.edit-event-input:focus,
+.edit-event-textarea:focus {
+    border-color: #27ae60;
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+    outline: none;
+}
+
+.edit-event-textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.interests-input-container {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.interests-input-container input {
+    display: block;
+    width: 100%;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1rem;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+    font-size: 1rem;
+    color: #333;
+}
+
+.interests-input-container input:focus {
+    border-color: #27ae60;
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+    outline: none;
+}
+
+.interests-input-container button {
+    background-color: #27ae60;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    padding: 0.8rem 2rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-left: 0.5rem;
+    box-shadow: 0 2px 8px rgba(39, 174, 96, 0.08);
+}
+
+.interests-input-container button:hover {
+    background-color: #229954;
+}
+
+#event-interests {
+    flex-grow: 1;
+}
+
+.interests-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.interest-tag {
+    background: #eafaf1;
+    color: #27ae60;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.interest-tag .remove-btn {
+    background: none;
+    border: none;
+    color: #aaa;
+    cursor: pointer;
+    font-size: 1.2rem;
+    line-height: 1;
+    transition: color 0.3s ease;
+}
+
+.interest-tag .remove-btn:hover {
+    color: #e74c3c;
+}
+
+.row-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.submit-row {
+    text-align: right;
+    margin-top: 2rem;
+    border-top: 1px solid #eee;
+    padding-top: 2rem;
+}
+
+.edit-event-button {
+    background-color: #27ae60;
+    color: white;
+    font-size: 1rem;
+    padding: 0.8rem 2rem;
+}
+
+.edit-event-button:hover {
+    background-color: #229954;
+}

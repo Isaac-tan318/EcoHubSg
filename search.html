@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - EcoHubSg</title>
+    <link rel="stylesheet" href="search.css">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <div id="app">
+        <nav>
+            <div class="logo">EcoHubSg</div>
+            <div class="nav-center">
+                <form id="search-form" class="search-form">
+                    <input type="text" id="search-input" class="search-input" placeholder="Search events..." />
+                </form>
+                <div class="auth-buttons">
+                    <a href="profile.html" id="profile-icon-link" class="profile-icon-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="profile-icon-svg">
+                            <circle cx="12" cy="8" r="4"/>
+                            <path d="M12 14c-5 0-8 2.5-8 4v2h16v-2c0-1.5-3-4-8-4z"/>
+                        </svg>
+                    </a>
+                    <a href="login.html"><button id="login-btn">Login</button></a>
+                    <a href="signup.html"><button id="signup-btn">Sign Up</button></a>
+                </div>
+            </div>
+        </nav>
+        <h2 class="page-title" id="results-heading"></h2>
+        <div id="main-content">
+            <button id="back-btn" class="back-btn-search">Back to Home</button>
+            <div id="search-results">
+                <div class="loader"></div>
+            </div>
+        </div>
+    </div>
+    <script src="auth.js"></script>
+    <script src="event.js"></script>
+    <script>
+        // Handle search bar in nav
+        document.getElementById('search-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const query = document.getElementById('search-input').value.trim();
+            if (query) {
+                window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+            }
+        });
+
+        // Get search query from URL
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param) || '';
+        }
+        const query = getQueryParam('q');
+        document.getElementById('search-input').value = query;
+        document.getElementById('results-heading').textContent = `Results for ("${query}")`;
+        document.getElementById('back-btn').onclick = function() {
+            window.location.href = 'index.html';
+        };
+
+        // Wait for events to be loaded by event.js (if available)
+        function showResults() {
+            if (typeof events === 'undefined' || !Array.isArray(events) || events.length === 0) {
+                setTimeout(showResults, 200);
+                return;
+            }
+            const results = events.filter(e =>
+                (e.title && e.title.toLowerCase().includes(query.toLowerCase())) ||
+                (e.description && e.description.toLowerCase().includes(query.toLowerCase()))
+            );
+            const resultsDiv = document.getElementById('search-results');
+            resultsDiv.innerHTML = ''; // Clear loader
+            if (results.length === 0) {
+                resultsDiv.innerHTML = '<p>No results found.</p>';
+                return;
+            }
+            results.forEach(event => {
+                const card = document.createElement('div');
+                card.className = 'event-card';
+                card.innerHTML = `
+                    ${event.image ? `<img src="${event.image}" alt="${event.title || event.name}" class="search-event-image">` : ''}
+                    <div class="event-card-content">
+                        <h3>${event.title || event.name}</h3>
+                        <p>Date: ${event.date}</p>
+                        <p>Location: ${event.location}</p>
+                        <p class="event-card-desc">${event.description}</p>
+                        <button class="signup-btn" data-id="${event.id}" ${!authManager.isUserType('user') ? 'disabled' : ''}>Sign Up</button>
+                    </div>
+                `;
+                resultsDiv.appendChild(card);
+            });
+        }
+        showResults();
+        // Also re-run showResults when events are updated (after login/logout or fetch)
+        if (typeof authManager !== 'undefined' && typeof authManager.onAuthChange === 'function') {
+            authManager.onAuthChange(showResults);
+        }
+        // Optionally, listen for DOMContentLoaded in case event.js loads after
+        document.addEventListener('DOMContentLoaded', showResults);
+    </script>
+</body>
+</html>

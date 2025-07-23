@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div id="user-login">
+            <h1>EcoHubSg</h1>
+            <br>
+            <h2>Login</h2>
+            <form id="loginForm">
+                <input id="username" type="text" placeholder="Username" required>
+                <input id="password" type="password" placeholder="Password" required>
+                <label for="role"><b>Role</b></label>
+                <select name="role" id="role">
+                    <option value="user">User</option>
+                    <option value="organisation">Organisation</option>
+                </select>
+                <button type="submit" id="login-btn">Login</button>
+            </form>
+            <button id="guest-btn" type="button" style="width:100%;margin-top:1rem;background:#f1f1f1;color:#333;">Continue as Guest</button>
+            <p>Don't have an account? <a href="register.html">Sign up</a></p>
+        </div>
+    </div>
+    <script src="auth.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const role = document.getElementById('role').value;
+            const submitButton = event.target.querySelector('button[type="submit"]');
+            submitButton.classList.add('button-loading');
+
+            try {
+                await authManager.login(role, document.getElementById('username').value, document.getElementById('password').value);
+            } catch (error) {
+                alert('Login failed. Invalid email, password or role.');
+            } finally {
+                submitButton.classList.remove('button-loading');
+            }
+        });
+        document.getElementById('guest-btn').addEventListener('click', function() {
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+
+</html>
