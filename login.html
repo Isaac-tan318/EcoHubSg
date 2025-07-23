@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/aws-amplify@5.0.4/dist/aws-amplify.min.js"></script>
+    <script src="auth.js"></script>
 </head>
 
 <body>
@@ -24,11 +26,15 @@
                 </select>
                 <button type="submit" id="login-btn">Login</button>
             </form>
+            <button id="google-login-btn" type="button" style="width:100%;margin-top:1rem;background:#fff;color:#333;border:1px solid #ddd;display:flex;align-items:center;justify-content:center;gap:0.5rem;">
+                <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" style="width:20px;height:20px;vertical-align:middle;"> Login with Google
+            </button>
+            </form>
             <button id="guest-btn" type="button" style="width:100%;margin-top:1rem;background:#f1f1f1;color:#333;">Continue as Guest</button>
             <p>Don't have an account? <a href="register.html">Sign up</a></p>
         </div>
     </div>
-    <script src="auth.js"></script>
+    
     <script>
         document.getElementById('loginForm').addEventListener('submit', async function (event) {
             event.preventDefault();
@@ -47,6 +53,9 @@
         document.getElementById('guest-btn').addEventListener('click', function() {
             window.location.href = 'index.html';
         });
+
+        // Login with Google using Cognito Hosted UI
+        document.getElementById('google-login-btn').addEventListener('click', authManager.loginWithGoogle);
     </script>
 </body>
 

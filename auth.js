@@ -1,5 +1,65 @@
-// Authentication module
+// Make sure to include the Amplify script in your HTML:
+// <script src="https://unpkg.com/aws-amplify@5.0.4/dist/aws-amplify.min.js"></script>
+if (window.Amplify) {
+    window.Amplify.configure({
+        Auth: {
+            region: 'eu-north-1',
+            userPoolId: 'eu-north-1_peaK2w5hI',
+            userPoolWebClientId: '4ksaku2s44fpcpc0g2ft5qqfrb',
+            oauth: {
+                domain: 'eu-north-1peak2w5hi.auth.eu-north-1.amazoncognito.com',
+                scope: ['email', 'profile', 'openid'],
+                redirectSignIn: window.location.origin + '/',
+                redirectSignOut: window.location.origin + '/',
+                responseType: 'token'
+            }
+        }
+    });
+}
+
 class AuthManager {
+    // Login with Google using Amplify Auth
+    async loginWithGoogle() {
+        if (window.Amplify && window.Amplify.Auth && window.Amplify.Auth.federatedSignIn) {
+            await window.Amplify.Auth.federatedSignIn({ provider: 'Google' });
+        } else {
+            alert('Amplify is not loaded. Please ensure the CDN script is included in your HTML.');
+        }
+    }
+
+    // Parse token from URL after Cognito Hosted UI redirect
+    handleCognitoRedirect() {
+        // Check if URL contains access_token or id_token
+        const hash = window.location.hash.substr(1);
+        if (!hash) return;
+        const params = new URLSearchParams(hash);
+        const accessToken = params.get('access_token');
+        const idToken = params.get('id_token');
+        if (accessToken) {
+            sessionStorage.setItem('authToken', accessToken);
+        }
+        if (idToken) {
+            // Try to extract email from idToken
+            let email = '';
+            try {
+                const payload = JSON.parse(atob(idToken.split('.')[1]));
+                if (payload.email) email = payload.email;
+            } catch (e) {
+                console.warn('Could not decode idToken for email:', e);
+            }
+            // Save user info
+            const user = { role: 'user', username: email, email };
+            sessionStorage.setItem('currentUser', JSON.stringify(user));
+        }
+        // // Remove token from URL for cleanliness
+        // if (accessToken || idToken) {
+        //     window.location.hash = '';
+        //     // Optionally, redirect to home page if on login page
+        //     if (window.location.pathname.endsWith('login.html')) {
+        //         window.location.href = 'index.html';
+        //     }
+        // }
+    }
    
     // Signup function for both roles
     async signup(email, username, password, role) {
@@ -450,6 +510,8 @@ const authManager = new AuthManager();
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+    // Handle Cognito Hosted UI redirect tokens if present
+    authManager.handleCognitoRedirect();
     authManager.init();
 });
 
