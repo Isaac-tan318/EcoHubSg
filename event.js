@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p class="event-card-desc event-desc-clamp">${event.description || 'No description available.'}</p>
                     <div class="event-card-meta">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                        <span>${event.date ? new Date(event.date).toLocaleDateString() : 'N/A'}</span>
+                <span>${event.date ? new Date(event.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}</span>
                     </div>
                     <div class="event-card-meta">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s-8-4.48-8-12a8 8 0 0116 0c0 7.52-8 12-8 12z"/><circle cx="12" cy="10" r="3"/></svg>
