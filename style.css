@@ -1,3 +1,9 @@
+.event-card {
+    text-decoration: none;
+}
+.event-card:hover {
+    text-decoration: none;
+}
 /* --- General Styles --- */
 body {
     font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
@@ -273,7 +279,7 @@ button, .button {
     margin-bottom: 2rem;
 }
 
-input, select {
+.container input, .container select {
     display: block;
     width: 100%;
     padding: 0.8rem 1rem;
@@ -284,7 +290,13 @@ input, select {
     transition: all 0.3s ease;
 }
 
-label[for="role"] {
+.container input:focus, .container select:focus {
+    border-color: #27ae60;
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+    outline: none;
+}
+
+label[for="role"], label[for="signup-role"] {
     display: block;
     margin-bottom: 0.5rem;
 }

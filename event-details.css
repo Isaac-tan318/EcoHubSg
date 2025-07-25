@@ -1,3 +1,16 @@
+.page-header#event-details-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem 0 1rem 0;
+}
+
+#event-title.page-title {
+    flex: 1;
+    text-align: center;
+    margin: 0;
+}
 .event-details-container {
     max-width: 900px;
     margin: 2rem auto;
@@ -5,6 +18,11 @@
     background: #fff;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+#event-details-header {
+    text-align: center;
+    margin-bottom: 2rem;
 }
 
 .event-image-header {
@@ -30,7 +48,7 @@
     align-items: center;
     gap: 0.75rem;
     color: #555;
-    font-size: 1rem;
+    font-size: 1.35rem;
     margin-bottom: 1rem;
 }
 

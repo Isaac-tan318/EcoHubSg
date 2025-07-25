@@ -62,6 +62,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const userSignups = await eventApi.checkUserSignups(currentUser.username);
             const hasSignedUp = userSignups.includes(event.id);
 
+            document.querySelector('#login-link').style.display = 'none';
+            document.querySelector('#signup-link').style.display = 'none';
+
             const signupButton = document.createElement('button');
             signupButton.className = 'button signup-button';
             signupButton.textContent = hasSignedUp ? 'Signed Up' : 'Sign Up';
@@ -83,6 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
             eventActionsElement.appendChild(signupButton);
         }
     }
+
+    renderEventDetails();
 
     // Set up auth change listener to render the page
     authManager.onAuthChange(renderEventDetails);

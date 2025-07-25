@@ -66,13 +66,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         events.forEach(event => {
-            const eventCard = document.createElement('div');
+            const eventCard = document.createElement('a');
             eventCard.className = 'event-card';
-            
+            // Build query string for event-details.html
+            const query = new URLSearchParams({
+                id: event.id,
+                title: event.title || '',
+                description: event.description || '',
+                location: event.location || '',
+                date: event.date || '',
+                orgUsername: event.orgUsername || '',
+                image: event.image || '',
+                interests: event.interests ? event.interests.join(',') : ''
+            }).toString();
+            eventCard.href = `event-details.html?${query}`;
+
             // Check if user has already signed up for this event
             const hasSignedUp = userSignups.includes(event.id);
             const isUser = currentUser && currentUser.role === 'user';
-            
+
             let signupButtonHtml = '';
             if (isUser) {
                 if (hasSignedUp) {
@@ -83,26 +95,26 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 signupButtonHtml = `<button class="signup-btn" data-id="${event.id}" data-requires-login="true">Sign Up</button>`;
             }
-            
+
             eventCard.innerHTML = `
-                    ${event.image ? `<img src="${event.image}" alt="${event.title || event.name}" class="event-card-image">` : ''}
-                    <div class="event-card-content">
-                        <div class="event-card-title">${event.title || 'Untitled Event'}</div>
-                        <p class="event-card-desc event-desc-clamp">${event.description || 'No description available.'}</p>
-                        <div class="event-card-meta">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                            <span>${event.date ? new Date(event.date).toLocaleDateString() : 'N/A'}</span>
-                        </div>
-                        <div class="event-card-meta">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s-8-4.48-8-12a8 8 0 0116 0c0 7.52-8 12-8 12z"/><circle cx="12" cy="10" r="3"/></svg>
-                            <span>${event.location || 'N/A'}</span>
-                        </div>
-                        <div class="event-card-actions">
-                            ${signupButtonHtml}
-                        </div>
+                ${event.image ? `<img src="${event.image}" alt="${event.title || event.name}" class="event-card-image">` : ''}
+                <div class="event-card-content">
+                    <div class="event-card-title">${event.title || 'Untitled Event'}</div>
+                    <p class="event-card-desc event-desc-clamp">${event.description || 'No description available.'}</p>
+                    <div class="event-card-meta">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        <span>${event.date ? new Date(event.date).toLocaleDateString() : 'N/A'}</span>
                     </div>
-                `;
-            
+                    <div class="event-card-meta">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s-8-4.48-8-12a8 8 0 0116 0c0 7.52-8 12-8 12z"/><circle cx="12" cy="10" r="3"/></svg>
+                        <span>${event.location || 'N/A'}</span>
+                    </div>
+                    <div class="event-card-actions">
+                        ${signupButtonHtml}
+                    </div>
+                </div>
+            `;
+
             mainContent.appendChild(eventCard);
         });
         
