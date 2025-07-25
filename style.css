@@ -315,6 +315,20 @@ input:focus, select:focus {
     text-decoration: underline;
 }
 
+.page-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem 2rem 0;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+#main-content .page-title {
+    margin: 0;
+}
+
+
 /* --- Loading Spinner --- */
 .loader {
     border: 4px solid #f3f3f3; /* Light grey */

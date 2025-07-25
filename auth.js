@@ -42,6 +42,7 @@ class AuthManager {
         }
         // Remove token from URL for cleanliness
         if (accessToken || idToken) {
+            this.notifyAuthChange();
             window.location.hash = '';
             // Optionally, redirect to home page if on login page
             if (window.location.pathname.endsWith('login.html')) {
@@ -216,7 +217,6 @@ class AuthManager {
             };
 
             // Store in sessionStorage
-
             sessionStorage.setItem('authToken', res.AccessToken);
             sessionStorage.setItem('currentUser', JSON.stringify(this.currentUser));
 
@@ -230,6 +230,7 @@ class AuthManager {
 
             // Update UI
             this.updateUIForAuthState();
+            this.notifyAuthChange();
 
             window.location.href = 'index.html';
         } catch (error) {

@@ -17,29 +17,25 @@
                     <input type="text" id="search-input" class="search-input" placeholder="Search events..." />
                 </form>
                 <div class="auth-buttons">
-                    <a href="profile.html" id="profile-icon-link" class="profile-icon-link">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="profile-icon-svg">
-                            <circle cx="12" cy="8" r="4"/>
-                            <path d="M12 14c-5 0-8 2.5-8 4v2h16v-2c0-1.5-3-4-8-4z"/>
-                        </svg>
-                    </a>
                     <a href="login.html"><button id="login-btn">Login</button></a>
                     <a href="signup.html"><button id="signup-btn">Sign Up</button></a>
                 </div>
             </div>
         </nav>
-        <h2 class="page-title" id="results-heading"></h2>
+        <div class="page-header">
+            <button id="back-btn" class="button">Back</button>
+            <h2 class="page-title" id="results-heading"></h2>
+        </div>
         <div id="main-content">
-            <button id="back-btn" class="back-btn-search">Back to Home</button>
             <div id="search-results">
                 <div class="loader"></div>
             </div>
         </div>
     </div>
     <script src="auth.js"></script>
-    <script src="event.js"></script>
     <script>
-        // Handle search bar in nav
+    const BASE_URL = 'https://i08bww0j0l.execute-api.eu-north-1.amazonaws.com';
+       // Handle search bar in nav
         document.getElementById('search-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const query = document.getElementById('search-input').value.trim();
@@ -60,44 +56,43 @@
             window.location.href = 'index.html';
         };
 
-        // Wait for events to be loaded by event.js (if available)
-        function showResults() {
-            if (typeof events === 'undefined' || !Array.isArray(events) || events.length === 0) {
-                setTimeout(showResults, 200);
-                return;
-            }
-            const results = events.filter(e =>
-                (e.title && e.title.toLowerCase().includes(query.toLowerCase())) ||
-                (e.description && e.description.toLowerCase().includes(query.toLowerCase()))
-            );
+        async function showResults() {
             const resultsDiv = document.getElementById('search-results');
-            resultsDiv.innerHTML = ''; // Clear loader
-            if (results.length === 0) {
-                resultsDiv.innerHTML = '<p>No results found.</p>';
-                return;
+            resultsDiv.innerHTML = '<div class="loader"></div>';
+            try {
+                const response = await fetch(`${BASE_URL}/events/search?query=${encodeURIComponent(query)}`);
+                if (!response.ok) throw new Error('Failed to fetch events');
+                const events = await response.json();
+                resultsDiv.innerHTML = '';
+                if (!Array.isArray(events) || events.length === 0) {
+                    resultsDiv.innerHTML = '<p>No results found.</p>';
+                    return;
+                }
+                events.forEach(event => {
+                    const card = document.createElement('div');
+                    card.className = 'event-card';
+                    card.innerHTML = `
+                        ${event.image ? `<img src="${event.image}" alt="${event.title || event.name}" class="search-event-image">` : ''}
+                        <div class="event-card-content">
+                            <h3>${event.title || event.name}</h3>
+                            <p>Date: ${event.date}</p>
+                            <p>Location: ${event.location}</p>
+                            <p class="event-card-desc">${event.description}</p>
+                            <button class="signup-btn" data-id="${event.id}" ${!authManager.isUserType('user') ? 'disabled' : ''}>Sign Up</button>
+                        </div>
+                    `;
+                    resultsDiv.appendChild(card);
+                });
+            } catch (err) {
+                console.error('Error loading events:', err);
+                resultsDiv.innerHTML = '<p style="color:red">Error loading events. Please try again later.</p>';
             }
-            results.forEach(event => {
-                const card = document.createElement('div');
-                card.className = 'event-card';
-                card.innerHTML = `
-                    ${event.image ? `<img src="${event.image}" alt="${event.title || event.name}" class="search-event-image">` : ''}
-                    <div class="event-card-content">
-                        <h3>${event.title || event.name}</h3>
-                        <p>Date: ${event.date}</p>
-                        <p>Location: ${event.location}</p>
-                        <p class="event-card-desc">${event.description}</p>
-                        <button class="signup-btn" data-id="${event.id}" ${!authManager.isUserType('user') ? 'disabled' : ''}>Sign Up</button>
-                    </div>
-                `;
-                resultsDiv.appendChild(card);
-            });
         }
         showResults();
-        // Also re-run showResults when events are updated (after login/logout or fetch)
+
         if (typeof authManager !== 'undefined' && typeof authManager.onAuthChange === 'function') {
             authManager.onAuthChange(showResults);
         }
-        // Optionally, listen for DOMContentLoaded in case event.js loads after
         document.addEventListener('DOMContentLoaded', showResults);
     </script>
 </body>

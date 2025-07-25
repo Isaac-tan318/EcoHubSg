@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details - EcoHubSg</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="event-details.css">
+</head>
+<body>
+    <div id="app">
+        <nav>
+            <a href="index.html" class="logo">EcoHubSg</a>
+            <div class="nav-center">
+                <div class="auth-buttons">
+                    <a href="profile.html" id="profile-icon-link" class="profile-icon-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="profile-icon-svg">
+                            <circle cx="12" cy="8" r="4"/>
+                            <path d="M12 14c-5 0-8 2.5-8 4v2h16v-2c0-1.5-3-4-8-4z"/>
+                        </svg>
+                    </a>
+                    <a href="login.html"><button id="login-btn">Login</button></a>
+                    <a href="signup.html"><button id="signup-btn">Sign Up</button></a>
+                </div>
+            </div>
+        </nav>
+        <div id="main-content" class="event-details-container">
+            <div class="page-header">
+                <a href="index.html" class="back-arrow" title="Back to Events">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                        <path d="M15 18l-6-6 6-6" />
+                    </svg>
+                </a>
+                <h1 id="event-title" class="page-title"></h1>
+            </div>
+            <div id="event-content">
+                <div class="loader"></div>
+            </div>
+            <div id="event-actions" class="event-actions-container">
+                <!-- Signup button will be injected here -->
+            </div>
+        </div>
+    </div>
+    <script src="auth.js"></script>
+    <script src="event-api.js"></script>
+    <script src="event-details.js"></script>
+</body>
+</html>
