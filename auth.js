@@ -319,7 +319,6 @@ class AuthManager {
         sessionStorage.removeItem('currentUser');
         sessionStorage.removeItem('loginCredentials'); // Clear saved credentials
 
-        google
         this.updateUIForAuthState();
         this.notifyAuthChange();
     }
