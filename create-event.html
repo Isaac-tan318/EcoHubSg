@@ -10,6 +10,9 @@
 
 <body class="edit-event-body">
     <div class="edit-main-container">
+        <div id="loader" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(255,255,255,0.7); z-index:9999; align-items:center; justify-content:center;">
+            <div style="border:6px solid #eee; border-top:6px solid #27ae60; border-radius:50%; width:48px; height:48px; animation:spin 1s linear infinite;"></div>
+        </div>
         <div class="form-header">
             <a href="index.html" class="back-arrow" title="Back">
                 <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="none" stroke="currentColor"
@@ -149,6 +152,8 @@
                 e.preventDefault();
                 const submitButton = e.target.querySelector('button[type="submit"]');
                 submitButton.classList.add('button-loading');
+                submitButton.disabled = true;
+                document.getElementById('loader').style.display = 'flex';
 
                 // Get form values
                 const title = document.getElementById("event-title").value.trim();
@@ -172,6 +177,8 @@
                 if (errorMsg) {
                     alert(errorMsg);
                     submitButton.classList.remove('button-loading');
+                    submitButton.disabled = false;
+                    document.getElementById('loader').style.display = 'none';
                     return;
                 }
 
@@ -238,10 +245,18 @@
                     console.error("Error creating event:", err);
                 } finally {
                     submitButton.classList.remove('button-loading');
+                    submitButton.disabled = false;
+                    document.getElementById('loader').style.display = 'none';
                 }
             });
         });
     </script>
+<style>
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
 </body>
 
 </html>

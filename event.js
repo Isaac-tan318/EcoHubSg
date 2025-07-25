@@ -65,7 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
             userSignups = await checkUserSignups(currentUser.username);
         }
         
-        events.forEach(event => {
+        events
+        .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .forEach(event => {
             const eventCard = document.createElement('a');
             eventCard.className = 'event-card';
             // Build query string for event-details.html
@@ -77,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 date: event.date || '',
                 orgUsername: event.orgUsername || '',
                 image: event.image || '',
-                interests: event.interests ? event.interests.join(',') : ''
+                interests: event.interests ? event.interests.join(',') : []
             }).toString();
             eventCard.href = `event-details.html?${query}`;
 
@@ -118,15 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
             mainContent.appendChild(eventCard);
         });
         
-        // Add create event button for organization users
-        if (currentUser && currentUser.role === 'organisation') {
-            const createEventBtn = document.createElement('button');
-            createEventBtn.textContent = 'Create Event';
-            createEventBtn.addEventListener('click', () => {
-                window.location.href = 'create-event.html';
-            });
-            mainContent.appendChild(createEventBtn);
-        }
     }
 
 

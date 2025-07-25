@@ -1,3 +1,27 @@
+.back-arrow svg {
+    color: #222;
+    stroke: #222;
+}
+/* Interests styles copied from create-event.css for consistency */
+.interests-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.interest-tag {
+    background: #eafaf1;
+    color: #27ae60;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
 .page-header#event-details-header {
     display: flex;
     align-items: center;

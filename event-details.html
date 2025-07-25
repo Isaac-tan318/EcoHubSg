@@ -35,6 +35,10 @@
             </div>
             <div id="event-content">
                 <div class="loader"></div>
+                <div class="event-interests-container" id="event-interests-container" style="display:none;">
+                    <h3>Interests</h3>
+                    <div id="event-interests-list" class="interests-list"></div>
+                </div>
             </div>
             <div id="event-actions" class="event-actions-container">
                 <!-- Signup button will be injected here -->
@@ -44,5 +48,26 @@
     <script src="auth.js"></script>
     <script src="event-api.js"></script>
     <script src="event-details.js"></script>
+<script>
+// Render interests after event data is loaded
+function renderEventInterests(interests) {
+    const container = document.getElementById('event-interests-container');
+    const list = document.getElementById('event-interests-list');
+    if (interests && interests.length > 0) {
+        list.innerHTML = '';
+        interests.forEach(interest => {
+            const tag = document.createElement('div');
+            tag.className = 'interest-tag';
+            tag.textContent = interest;
+            list.appendChild(tag);
+        });
+        container.style.display = '';
+    } else {
+        container.style.display = 'none';
+    }
+}
+// Example usage: renderEventInterests(['sustainability', 'recycling']);
+// Call this from event-details.js after event data is loaded
+</script>
 </body>
 </html>

@@ -8,15 +8,15 @@
 </head>
 <body class="edit-event-body">
     <div class="edit-main-container">
+        <div id="loader" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(255,255,255,0.7); z-index:9999; align-items:center; justify-content:center;">
+            <div style="border:6px solid #eee; border-top:6px solid #27ae60; border-radius:50%; width:48px; height:48px; animation:spin 1s linear infinite;"></div>
+        </div>
         <a href="profile.html" class="back-arrow" title="Back">
             <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
         </a>
-        
         <div id="loading" class="loader"></div>
-
         <!-- Event Grid Container -->
         <div id="event-grid" class="event-grid"></div>
-        
         <form id="edit-event-form" class="hidden">
             <div class="form-grid">
                 <div class="event-image-display" id="event-image-display">
@@ -125,6 +125,8 @@
             e.preventDefault();
             const submitButton = e.target.querySelector('button[type="submit"]');
             submitButton.classList.add('button-loading');
+            submitButton.disabled = true;
+            document.getElementById('loader').style.display = 'flex';
             
             // Check authentication before submitting
             const isAuthenticated = await authManager.ensureAuthenticated();
@@ -179,9 +181,17 @@
                 }
             } finally {
                 submitButton.classList.remove('button-loading');
+                submitButton.disabled = false;
+                document.getElementById('loader').style.display = 'none';
             }
         });
         
     </script>
+<style>
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
 </body>
 </html>

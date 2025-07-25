@@ -1,3 +1,13 @@
+.create-event-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.create-event-icon {
+    display: flex;
+    align-items: center;
+    margin-bottom:0.2rem;
+}
 .event-card {
     text-decoration: none;
 }
@@ -117,6 +127,10 @@ button, .button {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.create-event-icon{
+
 }
 .create-event-btn svg {
     margin-right: 0.5rem;
