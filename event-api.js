@@ -1,4 +1,3 @@
-// Create a global API object to avoid polluting the global namespace
 window.eventApi = {
     BASE_URL: 'https://i08bww0j0l.execute-api.eu-north-1.amazonaws.com',
 

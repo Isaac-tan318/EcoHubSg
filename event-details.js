@@ -88,6 +88,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     renderEventDetails();
+    document.getElementById('profile-icon-link').addEventListener('click', function(event) {
+        if(!authManager.getCurrentUser()) {
+            event.preventDefault();
+            alert('Please log in to view your profile.');
+        }
+    });
 
     // Set up auth change listener to render the page
     authManager.onAuthChange(renderEventDetails);

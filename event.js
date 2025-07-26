@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error('Failed to fetch user signups');
             }
             const signups = await response.json();
-            console.log('User signups:', signups);
             return signups.map(signup => signup.event_id);
         } catch (error) {
             console.error('Error checking user signups:', error);

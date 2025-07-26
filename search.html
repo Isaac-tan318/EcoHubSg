@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="style.css">
 
 </head>
+
 <body>
     <div id="app">
         <nav>
@@ -18,7 +20,7 @@
                 </form>
                 <div class="auth-buttons">
                     <a href="login.html"><button id="login-btn">Login</button></a>
-                    <a href="signup.html"><button id="signup-btn">Sign Up</button></a>
+                    <a href="register.html"><button id="signup-btn">Sign Up</button></a>
                 </div>
             </div>
         </nav>
@@ -33,10 +35,11 @@
         </div>
     </div>
     <script src="auth.js"></script>
+    <script src="event-api.js"></script>
     <script>
-    const BASE_URL = 'https://i08bww0j0l.execute-api.eu-north-1.amazonaws.com';
-       // Handle search bar in nav
-        document.getElementById('search-form').addEventListener('submit', function(e) {
+        const BASE_URL = 'https://i08bww0j0l.execute-api.eu-north-1.amazonaws.com';
+        // Handle search bar in nav
+        document.getElementById('search-form').addEventListener('submit', function (e) {
             e.preventDefault();
             const query = document.getElementById('search-input').value.trim();
             if (query) {
@@ -52,13 +55,21 @@
         const query = getQueryParam('q');
         document.getElementById('search-input').value = query;
         document.getElementById('results-heading').textContent = `Results for ("${query}")`;
-        document.getElementById('back-btn').onclick = function() {
+        document.getElementById('back-btn').onclick = function () {
             window.location.href = 'index.html';
         };
 
         async function showResults() {
             const resultsDiv = document.getElementById('search-results');
             resultsDiv.innerHTML = '<div class="loader"></div>';
+
+            var userSignups = [];
+            const currentUser = authManager.getCurrentUser();
+
+
+            if (currentUser && currentUser.role === 'user') {
+                userSignups = await window.eventApi.checkUserSignups(currentUser.username);
+            }
             try {
                 const response = await fetch(`${BASE_URL}/events/search?query=${encodeURIComponent(query)}`);
                 if (!response.ok) throw new Error('Failed to fetch events');
@@ -82,7 +93,20 @@
                         image: event.image || '',
                         interests: event.interests ? event.interests.join(',') : ''
                     }).toString();
+
                     card.href = `event-details.html?${query}`;
+
+                    let signupButtonHtml = '';
+                    if (currentUser && currentUser.role === 'user') {
+                        if (userSignups.includes(event.id)) {
+                            signupButtonHtml = `<button class="signup-btn" data-id="${event.id}" disabled aria-disabled="true" tabindex="-1" style="background-color: #ccc; cursor: not-allowed;">Signed Up</button>`;
+                        } else {
+                            signupButtonHtml = `<button class="signup-btn" data-id="${event.id}">Sign Up</button>`;
+                        }
+                    } else {
+                        signupButtonHtml = `<button class="signup-btn" data-id="${event.id}" data-requires-login="true">Sign Up</button>`;
+                    }
+
                     card.innerHTML = `
                         ${event.image ? `<img src="${event.image}" alt="${event.title || event.name}" class="search-event-image">` : ''}
                         <div class="event-card-content">
@@ -97,7 +121,7 @@
                             </div>
                             <p class="event-card-desc">${event.description}</p>
                             <div class="event-card-actions">
-                                <button class="signup-btn" data-id="${event.id}" ${!authManager.isUserType('user') ? 'disabled' : ''}>Sign Up</button>
+                                ${signupButtonHtml}
                             </div>
                         </div>
                     `;
@@ -113,7 +137,50 @@
         if (typeof authManager !== 'undefined' && typeof authManager.onAuthChange === 'function') {
             authManager.onAuthChange(showResults);
         }
-        document.addEventListener('DOMContentLoaded', showResults);
+        document.addEventListener('DOMContentLoaded', function () {
+            showResults();
+            const currentUser = authManager.getCurrentUser();
+            const loginBtn = document.getElementById('login-btn');
+            const signupBtn = document.getElementById('signup-btn');
+            if (loginBtn) loginBtn.parentElement.classList.toggle('hidden', !!currentUser);
+            if (signupBtn) signupBtn.parentElement.classList.toggle('hidden', !!currentUser);
+        });
+
+        const mainContent = document.getElementById('main-content');
+
+        if (mainContent) {
+            mainContent.addEventListener('click', async e => {
+                if (e.target.classList.contains('signup-btn')) {
+                    if (e.target.disabled) {
+                        return;
+                    }
+                    const eventId = e.target.dataset.id; // Remove parseInt() for UUID strings
+                    const currentUser = authManager.getCurrentUser();
+
+                    // Check if login is required
+                    if (e.target.dataset.requiresLogin === 'true') {
+                        alert('You need to login to sign up for events');
+                        e.preventDefault();
+                        return;
+                    }
+
+                    if (currentUser) {
+                        event.preventDefault();
+                        const successs = await window.eventApi.signUpForEvent(currentUser.username, eventId); // username, eventId orderF
+                        if (successs) {
+                            alert('Successfully signed up!');
+                            e.target.disabled = true;
+                            e.target.textContent = 'Signed Up';
+                            e.target.style.backgroundColor = '#ccc';
+                            e.target.style.cursor = 'not-allowed';
+                        } else {
+                            alert('Signup failed');
+                        }
+                    }
+                }
+            });
+        }
     </script>
 </body>
+
 </html>
