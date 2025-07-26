@@ -165,11 +165,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Check if login is required
                 if (e.target.dataset.requiresLogin === 'true') {
                     alert('You need to login to sign up for events');
+                    e.stopPropagation();
                     e.preventDefault();
                     return;
                 }
                 
                 if (currentUser) {
+                    e.stopPropagation(); // Prevents the click from bubbling up to parent elements
                     e.preventDefault();
                     await signUpForEvent(currentUser.username, eventId); // username, eventId order
                 }
