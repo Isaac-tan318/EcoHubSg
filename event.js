@@ -170,6 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 if (currentUser) {
+                    e.preventDefault();
                     await signUpForEvent(currentUser.username, eventId); // username, eventId order
                 }
             }
