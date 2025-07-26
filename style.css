@@ -143,7 +143,7 @@ button, .button {
 
 /* --- Main Content & Event Cards --- */
 #main-content {
-    padding: 2rem;
+    padding: 0 2rem 2rem; /* Keep horizontal and bottom padding */
     max-width: 1200px;
     margin: 0 auto;
 }
@@ -151,9 +151,10 @@ button, .button {
 .page-title {
     text-align: center;
     font-size: 2.5rem;
-    margin-bottom: 0rem;
     color: #2c3e50;
     font-weight: 700;
+    margin: 0 0 1.5rem 0; 
+    padding-top: 1.5rem; 
 }
 
 .events-grid, #org-events-list, #search-results {
@@ -210,6 +211,11 @@ button, .button {
     line-height: 1.5;
     flex-grow: 1;
     margin-bottom: 1.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4; /* Limit to 4 lines */
+    -webkit-box-orient: vertical;
 }
 
 .event-card-meta {
@@ -229,7 +235,7 @@ button, .button {
 }
 
 .event-card-actions {
-    margin-top: 1.5rem;
+    margin-top: 0.5rem;
     padding-top: 1rem;
     border-top: 1px solid #f0f0f0;
     display: flex;
