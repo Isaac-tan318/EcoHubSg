@@ -166,6 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Check if login is required
                 if (e.target.dataset.requiresLogin === 'true') {
                     alert('You need to login to sign up for events');
+                    e.preventDefault();
                     return;
                 }
                 
