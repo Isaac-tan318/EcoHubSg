@@ -24,6 +24,11 @@ class AuthManager {
         const params = new URLSearchParams(hash);
         const accessToken = params.get('access_token');
         const idToken = params.get('id_token');
+        const error = params.get('error');
+        if(error){
+            window.location.href = 'login.html';
+            alert('Google login failed: ' + error);
+        }
         if (accessToken) {
             sessionStorage.setItem('authToken', accessToken);
         }
@@ -352,7 +357,6 @@ class AuthManager {
         if (savedUser && savedToken) {
             // Check if token is expired
             if (this.isTokenExpired(savedToken)) {
-                console.log('Token expired, clearing session');
                 this.logout();
                 return false;
             }
@@ -402,7 +406,7 @@ class AuthManager {
 
         // If token is expired, attempt relogin
         if (this.isTokenExpired(savedToken)) {
-            console.log('Token expired, attempting relogin...');
+            // Token expired, attempting relogin...
 
             // Try to get saved credentials for relogin
             const savedCredentials = sessionStorage.getItem('loginCredentials');

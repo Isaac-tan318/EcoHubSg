@@ -39,12 +39,6 @@ window.loadOrgEvents = loadOrgEvents;
 
 async function createEvent(eventData) {
     const token = sessionStorage.getItem("authToken");
-    console.log("Event data:", eventData);
-    console.log("Token exists:", !!token);
-    console.log(
-        "Token preview:",
-        token ? token.substring(0, 50) + "..." : "No token"
-    );
 
     // Check if user is still logged in with auto-relogin
     const isAuthenticated = await authManager.ensureAuthenticated(false);
