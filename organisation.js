@@ -3,7 +3,6 @@ async function loadOrgEvents(username) {
     const orgEventsList = document.getElementById('org-events-list');
     orgEventsList.innerHTML = '<p>Loading...</p>';
     try {
-        // Adjust the endpoint as needed for your API
         const token = sessionStorage.getItem('authToken');
         const response = await fetch(`https://i08bww0j0l.execute-api.eu-north-1.amazonaws.com/event?organisation=${encodeURIComponent(username)}`, {
             headers: {

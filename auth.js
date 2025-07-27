@@ -203,7 +203,6 @@ class AuthManager {
         document.body.appendChild(loaderOverlay);
 
         try {
-            // Call placeholder Cognito API
             const res = await this.authenticateWithCognito(username, password, role);
 
             var email = '';
@@ -254,7 +253,6 @@ class AuthManager {
         }
     }
 
-    // Placeholder Cognito authentication
     async authenticateWithCognito(username, password, role) {
         const cognitoEndpoint = 'https://cognito-idp.eu-north-1.amazonaws.com/';
         try {

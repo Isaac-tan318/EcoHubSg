@@ -7,7 +7,6 @@ async function fetchUserInterests(email, token) {
     });
     if (!response.ok) throw new Error('Failed to fetch interests');
     const data = await response.json();
-    // DynamoDB returns {interests: [...]} or just [...], handle both
     if (data && Array.isArray(data.interests)) return data.interests;
     return [];
 }
