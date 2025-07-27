@@ -49,7 +49,7 @@
                 <div class="interests-list" id="interests-list">
                     <!-- Interests will be populated here -->
                 </div>
-                <form class="add-interest-form">
+                <form class="add-interest-form" onsubmit="addInterest(); return false;">
                     <input type="text" id="new-interest"
                         placeholder="Add a new interest..." maxlength="50">
                     <button type="button" onclick="addInterest()" class="button">Add</button>
